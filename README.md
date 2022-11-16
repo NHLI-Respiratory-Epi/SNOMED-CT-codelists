@@ -22,7 +22,7 @@ SNOMED CT uses a Concept ID to refer to a single clinical concept that may have 
 6. **(OPTIONAL) Use another search to automate the categorisation of codes.**
 It is possible that you may want to categorise the codes you are searching for, for example, if you are searching for codes related to smoking status, you may want to classify the codes as identicating current smoking, ex smoking, or never smoking. If you repeat further searches for each of your desired categories, you can further automate the production of your codelist.
 
-7. **Export codelist for review by a prinary care clinician**
+7. **Export codelist for review by a prinary care clinician.**
 Export your codelist as an Excel spreadsheet (making sure SNOMED CT codes are stored as text rather than numbers) and ask a clinician with primary care experience to review your codelist and check that the codes are suitable to identify your clinical event of interest. Ask them to generate a column at the end of the spreadsheet with their initials where they highlight variables with a 0 or 1 to identify terms that they would exclude (0) or include (1).
 
 8. **Restrict your codeslist to codes approved by a primary care clinician and save.**
