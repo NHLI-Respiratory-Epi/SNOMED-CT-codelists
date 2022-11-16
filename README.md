@@ -1,4 +1,4 @@
-# How to crete SNOMED CT codelists for primary care electronic healthcare records
+# How to create SNOMED CT codelists for primary care electronic healthcare records
 
 This is an extension of [current standard practice for primary care codelist creation](http://dx.doi.org/10.1136/bmjopen-2017-019637) which adds additional steps to take advantage of automated searches and advanced features of the SNOMED CT medical terminology to create more comprehensive codelists.
 
