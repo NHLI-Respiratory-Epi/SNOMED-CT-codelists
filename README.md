@@ -8,7 +8,7 @@ Creating SNOMED CT codelists can be broken down in to 8 steps:
 You need to identify all terms and synoynms related to your clinical event of interest and create search terms to find these, making use of wildcard characters ('*') to account for spelling variations, capitalisation, hyphenation, and other grammatical variations.
 
 2. **Search the medical terminology dictionary using the search terms.**
-Import the medical dictionary that includes the SNOMED CT term descriptions along with their description ID and concept ID, and search the dictionary for each of your search terms identified in step 1. Once you have searched the dictionary for all your terms you can restrict the dataset to only the SNOMED CT terms that matched with at least 1 of your search terms.
+Import the medical dictionary that includes the SNOMED CT term descriptions along with their description ID and concept ID, convert all text to lower-case, and search the dictionary for each of your search terms identified in step 1. Once you have searched the dictionary for all your terms you can restrict the dataset to only the SNOMED CT terms that matched with at least 1 of your search terms.
 
 3. **(OPTIONAL) Perform a secondary search to exclude broad undesired terms.**
 There is a good chance that your search terms will also identify terms that are completely irrelevant to your clinical event of interest. Therefore you can optionally perform another search using *exclusion* search terms. Before removing any terms highlighted for exclusion, it is important to make sure any desired terms haven't been erroneously highlighted. If you list of found is short, you can skip straight to step 4.
