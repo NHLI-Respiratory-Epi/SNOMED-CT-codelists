@@ -41,7 +41,8 @@ Creating SNOMED CT codelists can be broken down in to 8 steps:
 
 8. **Restrict your codelist to codes approved by a primary care clinician and save.**
     - Remove any codes from the codelist that were marked with a 0 by the reviewing clinican in **Step 7**.
-    - Save your finished codelist and export it for use!
+    - Save your finished codelist and export it.
+    - Your codelist is now ready to use!
 
 ## Example *Stata* code
 
