@@ -32,7 +32,7 @@ Creating SNOMED CT codelists can be broken down in to 8 steps:
 6. **(OPTIONAL) Use another search to automate the categorisation of codes.**
     - It is possible that you may want to categorise the codes you are searching for.
         - For example, if you are searching for smoking status codes, you may want to further classify the codes to identify current smoking, ex smoking, or never smoking.
-    - If you repeat further searches for each of your desired categories (e.g. one for current smoking, one for ex smoking, and one for never smoking), you can further automate the production of your codelist.
+    - If you repeat further searches for each of your desired categories (e.g., one for current smoking, one for ex smoking, and one for never smoking), you can further automate the production of your codelist.
 
 7. **Export codelist for review by a primary care clinician.**
     - Export your codelist as an Excel spreadsheet (making sure SNOMED CT codes are stored as text rather than numbers).
