@@ -25,7 +25,7 @@ It is possible that you may want to categorise the codes you are searching for, 
 7. **Export codelist for review by a primary care clinician.**
 Export your codelist as an Excel spreadsheet (making sure SNOMED CT codes are stored as text rather than numbers) and ask a clinician with primary care experience to review your codelist and check that the codes are suitable to identify your clinical event of interest. Ask them to generate a column at the end of the spreadsheet with their initials where they highlight variables with a 0 or 1 to identify terms that they would exclude (0) or include (1).
 
-8. **Restrict your codeslist to codes approved by a primary care clinician and save.**
+8. **Restrict your codelist to codes approved by a primary care clinician and save.**
 Your codelist is now ready for use!
 
 ## Example *Stata* code
