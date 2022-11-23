@@ -5,7 +5,7 @@ This is an extension of [current standard practice for primary care codelist cre
 Creating SNOMED CT codelists can be broken down in to 8 steps:
 
 1. **Identify search terms.**
-You need to identify all terms and synoynms related to your clinical event of interest and create search terms to find these, making use of wildcard characters ('*') to account for spelling variations, capitalisation, hyphenation, and other grammatical variations.
+You need to identify all terms and synonyms related to your clinical event of interest and create search terms to find these, making use of wildcard characters ('*') to account for spelling variations, capitalisation, hyphenation, and other grammatical variations.
 
 2. **Search the medical terminology dictionary using the search terms.**
 Import the medical dictionary that includes the SNOMED CT term descriptions along with their description ID and concept ID, and search the dictionary for each of your search terms identified in step 1, ensuring that the dictionary terms are passed through a `lower()` function to avoid missing matches due to differing case. Once you have searched the dictionary for all your terms you can restrict the dataset to only the SNOMED CT terms that matched with at least 1 of your search terms.
