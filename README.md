@@ -51,15 +51,27 @@ Creating SNOMED CT codelists can be broken down in to 8 steps:
 
 This example code is for *CPRD Aurum*, however the code could be applied to any database using SNOMED CT codes if the `medcodeid` variable is replaced with the SNOMED CT Description ID variable.
 ```stata
+//==============================================================================
+// 2022-11-24 PWS codelist creation template (based on previous JKQ group 
+// codelist templates)
+//
+// SMOKING STATUS
+//
+// Lines with 2 asterisks (**) at the beginning and end require modification
+// Lines with 1 asterisk (*) at the beginning and end MAY require modification
+//==============================================================================
+
+
+// Initialise do file & import CPRD Aurum medical dictionary
+//===========================================================
+
 clear all
 set more off
-macro drop _all
 
-
-//Enter directory you want to save files in
+//**Working directory - where you will open/save files**
 cd "D:\GitHub\code_lists\21_Health_Status_and_Health_Services\Smoking\CPRD_Aurum"
 
-//Enter name of do file here
+//**Enter name of do file here. This ensures all files have the same name.**
 local filename "smoking_status"
 
 
@@ -68,78 +80,82 @@ capture log close
 log using `filename', text replace
 
 
-//Directory of medical dictionary
+//*Directory of medical dictionary*
 local browser_dir "Z:\Database guidelines and info\CPRD\CPRD_CodeBrowser_202105_Aurum"
 
-//Directory of label lookups
+//*Directory of label lookups*
 local lookup_dir "Z:\Database guidelines and info\CPRD\CPRD_Latest_Lookups_Linkages_Denominators\Aurum_Lookups_May_2021"
 
 
-//Import latest medical browser; force medcodeid, SnomedCT to be string
+//Import latest medical browser; force medcodeid, SNOMED CT Description ID, and SNOMED CT Concept ID to be string
 import delimited "`browser_dir'/202105_EMISMedicalDictionary.txt", stringcols(1 5 6)
 
 //Drop (currently) unused variables
 drop release
 
-//label EMIS code category - **requires cprdlabel ado file**
-cprdlabel emiscodecategoryid, lookup(EMISCodeCat) location(`lookup_dir')
+//Label EMIS code category - REQUIRES CPRDLABEL ADO FILE
+capture noisily cprdlabel emiscodecategoryid, lookup(EMISCodeCat) location(`lookup_dir')
+
+//Check if cprdlabel is installed
+if _rc == 199 {
+	
+	display in red "cprdlabel command needs to be installed. Install from: https://github.com/pstone22/cprdlabel"
+}
+else if _rc {
+
+	error _rc
+}
 
 //Save medical code browser to a tempfile
 tempfile medical
 save `medical'
 
 
-*Insert your search terms as shown below, do NOT change local names, name any additional grouping of search terms in the same format as shown (searchterms#)
-local searchterms1 " "*smok*" "*cigar*" "*tobac*" "
+// STEP 1. IDENTIFY SEARCH TERMS
+//===============================
 
-*Replace number with total number of locals for search terms
-local n = 1
+//**Define search terms below. Use multiple local macros if categorising desired codes in to multiple categories make more sense**
 
-*************************************************************
-** You shouldn't need to change code between these markers **
-*************************************************************
-*Search all search terms in descriptions
-forvalues i = 1/`n'{
+local smokingstatus " "*smok*" "*cigar*" "*tobac*" "
+
+
+// STEP 2. SEARCH THE MEDICAL TERMINOLOGY DICTIONARY USING THE SEARCH TERMS
+//==========================================================================
+
+//**Add any additional local macros if you have used more than 1**
+//For each specified local macro...
+foreach termgroup in /**/smokingstatus/**/ {
 	
-	foreach termgroup in searchterms`i' {
+	//Generate an empty binary indicator variable taking the name of the local macro
+	gen byte `termgroup' = .
+	
+	//For each SNOMED CT term description (converted to lower case)...
+	foreach codeterm in lower(term) {
 		
-		gen byte `termgroup' = .
-		
-		foreach codeterm in lower(term) {
+		//For each individual search term in the local macro
+		foreach searchterm in ``termgroup'' {
 			
-			foreach searchterm in ``termgroup'' {
-				
-				replace `termgroup' = 1 if strmatch(`codeterm', "`searchterm'")
-			}
+			//Set the indicator variable to 1 if the SNOMED CT term description matches the search term from the local macro
+			replace `termgroup' = 1 if strmatch(`codeterm', "`searchterm'")
 		}
 	}
 }
 
-*Limit data to those terms that were found
-gen foundterm = .
-
-forvalues i = 1/`n'	{
-	
-	replace foundterm = 1 if searchterms`i' == 1
-}
-
-keep if foundterm == 1
-drop foundterm
+keep if /**/smokingstatus/**/ == 1
 compress
-*************************************************************
-** You shouldn't need to change code between these markers **
-*************************************************************
 
-*Labels --> if desired, rename to match groups of similar variables
-rename searchterms1 smokingstatus
+gsort /**/smokingstatus/**/ snomedctconceptid snomedctdescriptionid originalreadcode
 
-drop smokingstatus   //not needed as going to sub-categorise
+tab1 /**/smokingstatus/**/
 
-*************************************************************
-//2.) Remove any irrelevant codes
-*************************************************************
 
-//exclusion terms
+// (OPTIONAL) STEP 3. PERFORM A SECONDARY SEARCH TO EXCLUDE BROAD UNDESIRED TERMS
+//================================================================================
+
+//Comment out this section if not required.
+
+//**Exclusion terms**
+
 local exclude " "*accident*" "*allergen*" "*asthma*" "*burn*" "*diesel*" "*leaf*specific*" "*lighter*" "*virus*group*" "*waste*management*" "*wheeze*" "*socio-economic*" "*assist-lite*" "
 
 local animal " "*cheese*" "*cockroach*" "*fish*" "*frog*" "*haddock*" "*mackerel*" "*rabbit*" "*salmon*" "*smoked*cod*" "*smoky*gilled*woodlover*" "*smoky*madtom*" "*trout*" "
@@ -153,8 +169,8 @@ local garments " "*garment*" "*sigvaris*" "
 local occupation " "*blender*" "*grader*" "*industry*" "*maker*" "*operator*" "*preparer*" "*processor*" "*stripper*" "*tobacconist*" "
 
 
-//search for codes to exclude
-foreach excludeterm in exclude animal bacteria fire garments occupation {
+//Search for codes to exclude
+foreach excludeterm in exclude /**/animal bacteria fire garments occupation/**/ {
 
 	gen byte `excludeterm' = .
 
@@ -167,74 +183,88 @@ foreach excludeterm in exclude animal bacteria fire garments occupation {
 	}
 }
 
-//CHECK THAT NOTHING IMPORTANT IS HIGHLIGHTED FOR EXCLUSION BEFORE DROPPING
+//Check that nothing important is highlighted for exclusion before dropping
 list term if exclude == 1
-list term if animal == 1
+/**/list term if animal == 1
 list term if bacteria == 1
 list term if fire == 1
 list term if garments == 1
-list term if occupation == 1
+list term if occupation == 1/**/
 
 drop if exclude == 1 ///
-		| animal == 1 ///
+/**/	| animal == 1 ///
 		| bacteria == 1 ///
 		| fire == 1 ///
 		| garments == 1 ///
-		| occupation == 1
+		| occupation == 1/**/
 
-drop exclude animal bacteria fire garments occupation
+drop exclude /**/animal bacteria fire garments occupation/**/
 count
 compress
 
 
-//Initial manual screen of codes
+// STEP 4. MANUAL SCREEN OF CODELIST TO REMOVE UNDESIRED TERMS
+//=============================================================
 
-//medcodeids to remove
+//**medcodeids to remove**
 local initial_remove "1834611000006117 8285811000006114 4153251000006115  8285791000006110 9211501000006113 8285721000006113 6542461000006112 2703821000006119 8285781000006112 5172291000006114 11930621000006114 1865641000006112 8285801000006111 1856551000006114 2866001000006114"
+
+gen byte remove = 0
 
 foreach medcode of local initial_remove {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if medcodeid == "`medcode'"
-	
-	drop if medcodeid == "`medcode'"
+	replace remove = 1 if medcodeid == "`medcode'"
 }
 
+list medcodeid snomedctdescriptionid snomedctconceptid originalreadcode term if remove == 1
+drop if remove == 1
+drop remove
+
+compress
+tab1 /**/smokingstatus/**/
 
 
-//3.) Remerge SNOMED CT Concept IDs to find any missed codes
-//===========================================================
+// STEP 5. USE THE SNOMED CT CONCEPT ID TO FIND ADDITIONAL SYNONYMOUS TERMS
+//==========================================================================
 
-//check for missing SNOMED CT Concepts
+//Check for missing SNOMED CT Concepts
 codebook snomedctconceptid
 assert !missing(snomedctconceptid)
 
 count
 
-//make a note of current list
+//Make a note of current list
 preserve
 
-keep medcodeid
+keep medcodeid /**/smokingstatus/**/
 gen byte original = 1
 tempfile original
 save `original'
 
 restore
 
-//merge SNOMED concepts with medical dictionary
-keep snomedctconceptid
+//Merge SNOMED CT Concepts with medical dictionary
+keep snomedctconceptid /**/smokingstatus/**/
 bysort snomedctconceptid: keep if _n == 1
 
 merge 1:m snomedctconceptid using `medical', nogenerate keep(match)
 merge 1:1 medcodeid using `original', nogenerate
 compress
 order snomedctconceptid, before(snomedctdescriptionid)
+order /**/smokingstatus/**/, last
+gsort /**/smokingstatus/**/ originalreadcode
+
 
 count
 
-//show new codes
-list term originalreadcode snomedctconceptid if original != 1
+//Show new codes
+foreach category of varlist /**/smokingstatus/**/ {
+	
+	display "New terms found for: `category'"
+	list snomedctconceptid originalreadcode term if original != 1 & `category' == 1
+}
 
-//check new codes in the context of originally included SNOMED CT Concept ID codes
+//Check new codes in the context of originally included SNOMED CT Concept ID codes
 preserve
 
 drop if original == 1
@@ -262,15 +292,18 @@ foreach expanded_id of local expanded_ids {
 	
 	display "SNOMED CT Concept ID for which additional terms where found: `expanded_id'"
 	
-	list medcodeid term originalreadcode if snomedctconceptid == "`expanded_id'"
+	list medcodeid originalreadcode term if snomedctconceptid == "`expanded_id'"
 }
 
 
 
-//4.) Attempt labelling of current, ex, and never smoking status
-//===============================================================
+// (OPTIONAL) STEP 6. USE ANOTHER SEARCH TO AUTOMATE THE CATEGORISATION OF CODES
+//===============================================================================
 
-//search terms
+//Comment out this section if not required.
+
+//**Search terms for each categorisation desired**
+
 local current " "*current*" "*smokes*" "*smoker*" "*smoking*" "*refer*" "*cessation*" "*stop*smoking*" "*cigarette*" "*tobacco*" "*assessment*" "*advice*" "*trying*" "*restart*" "*increase*" "*education*" "*poisoning*" "*nicotine*" "
 
 local ex " "*ex *" "*ex-*" "*past*smoker*" "*abstinent*" "*current*non-*" "*current*non *" "*stopped*" "*age*cessation*" "*ceased*" "*carbon*monoxide*non*" "*smoked*" "*withdrawal*" "*smoker*before*" "*history*of*smok*" "
@@ -288,8 +321,8 @@ local vape " "*vape*" "*electronic*" "e-*" "* e-*" "
 local drugs " "*heroin*" "*cannabis*" "*methadone*" "*diamorphine*" "*impregnate*" "*dragon*" "*smokes*drugs*" "
 
 
-//search for codes
-foreach excludeterm in drugs passive vape smokeless_tobacco ex never unknown current {
+//Search for codes
+foreach excludeterm in /**/drugs passive vape smokeless_tobacco ex never unknown current/**/ {
 
 	gen byte `excludeterm' = .
 
@@ -302,16 +335,9 @@ foreach excludeterm in drugs passive vape smokeless_tobacco ex never unknown cur
 	}
 }
 
-gsort drugs passive vape smokeless_tobacco ex never unknown current
+gsort /**/drugs passive vape smokeless_tobacco ex never unknown current/**/
 
-//Tobacco use in mother complicating childbirth - maybe should be current?
-//Never smoked tobacco - move from ex to never
-//[X]Mental and behavioral disorders due to use of tobacco: harmful use - moved from entered to current
-//total time smoked - current or ex??
-//some value entered codes could go in to current
-//maybe code cigarette smoke/smoke (substance) in to passive?
-
-
+//**Create and label variable for smoking status**
 label define smoking_status 1 "Never smoker" 2 "Ex-smoker" 3 "Current smoker"
 gen smoking_status = .
 label values smoking_status smoking_status
@@ -326,57 +352,57 @@ replace smoking_status = . if unknown == 1 ///
 							| smokeless_tobacco == 1
 
 
-//CORRECTIONS (using SNOMED CT Concept IDs)
+//**Categorisation corrections (using SNOMED CT Concept IDs)**
 
-//Should be never
+//Should be "Never"
 
 local never "266919005 221000119102"
 
 foreach code of local never {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	replace smoking_status = 1 if snomedctconceptid == "`code'"
 }
 
 
-//Should be ex
+//Should be "Ex"
 
 local ex "160618006 395177003 8517006 1221000119103 1092511000000105 904221000006106 1626121000006100 1873511000006102 904091000006100 191889006 191889006 201931000000109 710081004 37311000006101 904201000006101 201941000000100 440012000 85931000119105 852121000006105 909391000006101 713700008 1974571000006100 1221000175102 137761000006105 228486009 1092031000000108 266928006 384742004"
 
 foreach code of local ex {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	replace smoking_status = 2 if snomedctconceptid == "`code'"
 }
 
 
-//Should be current
+//Should be "Current"
 
 local current "10761391000119102 266918002 228487000 230057008 1974421000006100 230058003 857871000000107 89765005 413173009 470041000000100 191887008 470041000000100 266927001 724697004 160613002 1421000175103 697956009 722497008 314538009 30483005 57264008 711028002 365982000 110483000 230056004 405140009 143461000000103 1110971000000101"
 
 foreach code of local current {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	replace smoking_status = 3 if snomedctconceptid == "`code'"
 }
 
 
-//Should be value
+//Should be "Value" - i.e. manually entered value
 
 local value "1746211000006107 390902009 766931000000106 390904005 137811000006103 390903004"
 
 foreach code of local value {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	replace smoking_status = . if snomedctconceptid == "`code'"
 }
 
 
-//Too vague
+//Too vague to be classified
 replace smoking_status = . if strmatch(lower(term), "*follow*up*")
 replace smoking_status = . if strmatch(lower(term), "*f/u*")
 replace smoking_status = . if strmatch(lower(term), "*monitor*")
@@ -385,24 +411,24 @@ local vague "365980008 365981007 108333003 904051000006106 904211000006103 17120
 
 foreach code of local vague {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	replace smoking_status = . if snomedctconceptid == "`code'"
 }
 
 
-//Remove
+//Remove from list completely
 local remove "83086008 421693007 75856009 37921004 27743007 45349003 465409000 82958007 30795006 855801000006100"
 
 foreach code of local remove {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	drop if snomedctconceptid == "`code'"
 }
 
 
-//PASSIVE - UNEXPOSED/REMOVE
+//Passive smoking - Unexposed & codes to remove
 replace passive = . if smoking_status != .  //already classified
 
 label define passive 0 "Unexposed" 1 "Exposed"
@@ -412,7 +438,7 @@ local unexposed "1899561000006105 1899581000006100 438618001 1911921000006104 18
 
 foreach code of local unexposed {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	replace passive = 0 if snomedctconceptid == "`code'"
 }
@@ -422,29 +448,29 @@ local passive_remove "1104251000000106 1899541000006106 1033041000000104 1934421
 
 foreach code of local passive_remove {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	drop if snomedctconceptid == "`code'"
 }
 
 
-//VAPE - CURRENT/EX
+//Vaping - Current & Ex
 label define vape 0 "Never vaper" 1 "Ex-vaper" 2 "Current vaper"
 label values vape vape
 
-recode vape 1=2  //make all current
+recode vape 1=2  //make all tagged values Current vapers
 
-local ex_vape "908781000000104"  //values to make ex
+local ex_vape "908781000000104"  //values to make Ex
 
 foreach code of local ex_vape {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	replace vape = 1 if snomedctconceptid == "`code'"
 }
 
 
-//SMOKELESS TOBACCO - CURRENT/EXCLUSION
+//Smokeless tobacco - Current, Ex, Never, & codes to exclude
 label define smokeless 0 "Never smokeless tobacco" 1 "Ex smokeless tobacco" 2 "Current smokeless tobacco"
 label values smokeless_tobacco smokeless
 
@@ -456,37 +482,38 @@ local remove_smokeless "228499007 363906001 228509002 363907005"
 
 foreach code of local ex_smokeless {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	replace smokeless_tobacco = 1 if snomedctconceptid == "`code'"
 }
 
 foreach code of local never_smokeless {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	replace smokeless_tobacco = 0 if snomedctconceptid == "`code'"
 }
 
 foreach code of local remove_smokeless {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	drop if snomedctconceptid == "`code'"
 }
 
 
-//Final removal of codes
+//Final removal of codes that cannot be categorised
 local final_remove "108333003 836001000000109 1809121000006109 427189007 169940006 698289004 12465801000001106 720201000000102 1538681000006102"
 
 foreach code of local final_remove {
 	
-	list medcodeid term originalreadcode snomedctconceptid snomedctdescriptionid if snomedctconceptid == "`code'"
+	list medcodeid snomedctconceptid snomedctdescriptionid originalreadcode term if snomedctconceptid == "`code'"
 	
 	drop if snomedctconceptid == "`code'"
 }
 
 
+//Tidy up and generate variables for all desired categories
 gsort smoking_status drugs passive vape smokeless_tobacco unknown
 drop original current ex never unknown
 
@@ -500,6 +527,10 @@ generate ever_smoker = 1 if smoking_status == 2 | smoking_status == 3
 order term smoking_status, after(emiscodecategoryid)
 
 
+// STEP 7. EXPORT CODELIST FOR REVIEW BY A PRIMARY CARE CLINICIAN
+//================================================================
+
+gsort /**/smoking_status drugs passive vape smokeless_tobacco/**/ snomedctconceptid snomedctdescriptionid originalreadcode
 compress
 save `filename', replace
 export excel `filename'.xlsx, firstrow(variables) replace
@@ -507,12 +538,40 @@ export delimited `filename'.csv, quote replace
 
 
 
-//5.) Compare with previous list(s)
-//==================================
+// STEP 8. RESTRICT YOUR CODELIST TO CODES APPROVED BY A PRIMARY CARE CLINICIAN AND SAVE
+//=======================================================================================
 
+//This codelist was updated with clinican input as it was created.
+//Therefore I have just compared with the previous codelist.
+
+//Load JKQ classifications
+/*
+import excel `filename'_JKQ, firstrow case(lower) clear
+
+keep medcodeid jkq
+
+tempfile jkq_classification
+save `jkq_classification'
+
+use `filename', clear
+
+merge 1:1 medcodeid using `jkq_classification', nogenerate
+
+//Remove codes marked for exclusion by JKQ
+list medcodeid snomedctconceptid term if jkq == 0
+drop if jkq == 0
+
+//Save JKQ approved codelist
+gsort snomedctconceptid snomedctdescriptionid originalreadcode
+compress
+save `filename', replace
+export delimited `filename', replace quote
+export excel "`filename'.xlsx", replace firstrow(var)
+*/
+
+//Compare with previous codelist
 preserve
 
-//compare with previous codelist
 merge 1:1 medcodeid using smoking
 
 gsort smoking_status drugs passive vape smokeless_tobacco gp_recorded_smoking
@@ -522,10 +581,10 @@ list term smoking_status drugs passive gp_recorded_smoking smokstatus if _merge 
 restore
 
 
-//6.) Generate tag file
-//======================
+// STEP 9. GENERATE TAG FILE
+//===========================
 
-//= Update details here, everything else is automated ==========================
+//=**Update details here, everything else is automated**========================
 local description "Smoking status"
 local author "Phil"
 local date "August 2022"
@@ -554,7 +613,7 @@ replace v1 = "`date_JKQ_approved'" in 9
 export delimited "`filename'.tag", replace novarnames delimiter(tab)
 
 
-use "`filename'", clear  //so that you can see results of search after do file run
+use "`filename'", clear  //So that you can see results of search after do file run
 
 
 log close
