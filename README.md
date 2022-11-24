@@ -3,7 +3,7 @@
 This is an extension of [current standard practice for primary care codelist creation](http://dx.doi.org/10.1136/bmjopen-2017-019637) which adds additional steps to take advantage of automated searches and advanced features of the SNOMED CT medical terminology to create more comprehensive codelists.
 
 Creating SNOMED CT codelists can be broken down in to 8 steps:
-![](Flowchart no white space.png)
+![](Flowchart.png)
 1. **Identify search terms.**
     - To begin, you need to identify all terms and synonyms related to your clinical event of interest.
     - Next you need to create "search terms" to find each of these terms, making use of wildcard characters (*) to account for spelling variations, capitalisation, hyphenation, and other grammatical variations.
