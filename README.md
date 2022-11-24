@@ -4,7 +4,7 @@ This is an extension of [current standard practice for primary care codelist cre
 
 Creating SNOMED CT codelists can be broken down in to 8 steps:
 <p align="center">
-<img src="Flowchart.png" height="675"/>
+	<img src="Flowchart.png" height="675"/>
 </p>
 
 1. **Identify search terms.**
@@ -49,7 +49,7 @@ Creating SNOMED CT codelists can be broken down in to 8 steps:
 
 ## Example *Stata* code
 
-This example code is for CPRD Aurum, however the code could be applied to any database using SNOMED CT codes if the `medcodeid` variable is replaced with the SNOMED CT Description ID variable.
+This example code is for *CPRD Aurum*, however the code could be applied to any database using SNOMED CT codes if the `medcodeid` variable is replaced with the SNOMED CT Description ID variable.
 ```stata
 clear all
 set more off
