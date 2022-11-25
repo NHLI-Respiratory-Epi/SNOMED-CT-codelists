@@ -49,7 +49,7 @@ Creating SNOMED CT codelists can be broken down in to 8 steps:
 
 ## Example *Stata* code
 
-This example code is for *CPRD Aurum*, however the code could be applied to any database using SNOMED CT codes if the `medcodeid` variable is replaced with the SNOMED CT Description ID variable.
+This example code is a smoking codelist for *CPRD Aurum*, however the code could be applied to any database using SNOMED CT codes if the `medcodeid` variable is replaced with the SNOMED CT Description ID variable.
 ```stata
 //==============================================================================
 // 2022-11-24 PWS codelist creation template (based on previous JKQ group 
