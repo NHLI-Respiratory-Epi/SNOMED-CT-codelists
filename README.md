@@ -4,7 +4,7 @@ This is an extension of [current standard practice for primary care codelist cre
 
 Creating SNOMED CT codelists can be broken down in to 8 steps:
 <p align="center">
-	<img src="Flowchart.png" height="675"/>
+	<img src="Flowchart.svg" height="675"/>
 </p>
 
 1. **Identify search terms.**
