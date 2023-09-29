@@ -49,7 +49,7 @@ Creating SNOMED CT codelists can be broken down in to 8 steps:
 
 ## Example *Stata* code
 
-This example code is a smoking codelist for *CPRD Aurum*, however the code could be applied to any database using SNOMED CT codes if the `medcodeid` variable is replaced with the SNOMED CT Description ID variable.
+This example code is a smoking codelist for *CPRD Aurum*, however the code could be applied to any database using SNOMED CT codes if the `medcodeid` variable is replaced with the SNOMED CT Description ID variable. The do file can be found [here](/scripts/stata/smoking_status.do).
 ```stata
 //==============================================================================
 // 2022-11-24 PWS codelist creation template (based on previous JKQ group 
@@ -618,3 +618,9 @@ use "`filename'", clear  //So that you can see results of search after do file r
 
 log close
 ```
+
+## Example *R* code
+An example smoking status R script can be found [here](scripts/R/smoking_status.R).
+
+## Example *python* code
+An example smoking status python script can be found [here](scripts/python/smoking_status.py) (work in progress).
