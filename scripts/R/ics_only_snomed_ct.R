@@ -106,20 +106,27 @@ searchMedBro <- function(df, searchlist, searchin = c("term")) {
 # // STEP 1. IDENTIFY SEARCH TERMS
 # //===============================
 
-ics_only_list <- c("smok", "cigar", "tobac")
+beclometasone_list <- c("beclometasone", "aerobec", "asmabec", "beclazone", "becloforte", "becodisks", "becotide", "clenil", "filair", 
+                        "kelhale", "pulvinal beclometasone", "qvar", "soprobec")
+budesonide_list <- c("budesonide", "budelin", "pulmicort")
+ciclesonide_list <- c("ciclesonide", "alvesco")
+fluticasone_list <- c("fluticasone", "campona", "flixotide", "seffalair")
+mometasone_list <- c("mometasone", "asmanex")
+
+ics_0302 <- c(beclometasone_list, budesonide_list, ciclesonide_list, fluticasone_list, mometasone_list)
 
 
 # // STEP 2. SEARCH THE MEDICAL TERMINOLOGY DICTIONARY USING THE SEARCH TERMS
 # //==========================================================================
 
 
-medbro <- searchMedBro(medbro, smoking_list)
+df <- searchMedBro(df, ics_0302)
 
-table(medbro$allterms)
+table(df$allterms)
 
-medbro <- medbro %>% rename(smokingstatus = allterms)
+df <- df %>% rename(ics_only = allterms)
 
-medbro <- medbro %>% filter(smokingstatus == 1)
+df <- df %>% filter(ics_only == 1)
 
 # // (OPTIONAL) STEP 3. PERFORM A SECONDARY SEARCH TO EXCLUDE BROAD UNDESIRED TERMS
 # //================================================================================
