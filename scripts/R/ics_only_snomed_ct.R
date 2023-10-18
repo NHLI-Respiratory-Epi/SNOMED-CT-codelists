@@ -112,8 +112,9 @@ budesonide_list <- c("budesonide", "budelin", "pulmicort")
 ciclesonide_list <- c("ciclesonide", "alvesco")
 fluticasone_list <- c("fluticasone", "campona", "flixotide", "seffalair")
 mometasone_list <- c("mometasone", "asmanex")
+corticosteroid_list <- c("corticosteroids")
 
-ics_0302 <- c(beclometasone_list, budesonide_list, ciclesonide_list, fluticasone_list, mometasone_list)
+ics_0302 <- c(beclometasone_list, budesonide_list, ciclesonide_list, fluticasone_list, mometasone_list, corticosteroid_list)
 
 
 # // STEP 2. SEARCH THE MEDICAL TERMINOLOGY DICTIONARY USING THE SEARCH TERMS
