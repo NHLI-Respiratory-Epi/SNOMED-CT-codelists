@@ -106,7 +106,7 @@ searchMedBro <- function(df, searchlist, searchin = c("term")) {
 # // STEP 1. IDENTIFY SEARCH TERMS
 # //===============================
 
-smoking_list <- c("smok", "cigar", "tobac")
+ics_only_list <- c("smok", "cigar", "tobac")
 
 
 # // STEP 2. SEARCH THE MEDICAL TERMINOLOGY DICTIONARY USING THE SEARCH TERMS
