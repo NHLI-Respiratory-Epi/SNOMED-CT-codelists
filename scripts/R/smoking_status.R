@@ -1,4 +1,4 @@
-# read in appropraite libraries
+# read in appropriate libraries
 
 library(tidyverse) # a package for tidy working in R
 library(openxlsx2) # for writing excel files
