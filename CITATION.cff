@@ -1,0 +1,50 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  How to: create SNOMED CT codelists for primary care
+  electronic healthcare records
+message: >-
+  If you use this method, please cite it using the metadata
+  from this file.
+type: software
+authors:
+  - given-names: Philip W
+    family-names: Stone
+    affiliation: Imperial College London
+    orcid: 'https://orcid.org/0000-0002-2326-4987'
+  - given-names: Alexander
+    family-names: Adamson
+    affiliation: Imperial College London
+    orcid: 'https://orcid.org/0000-0003-0265-5900'
+  - given-names: Georgie M
+    family-names: Massen
+    affiliation: Imperial College London
+    orcid: 'https://orcid.org/0000-0003-4355-6546'
+  - name: Respiratory Electronic Health Records Group
+    address: Imperial College London
+    city: London
+    country: GB
+    website: >-
+      https://www.imperial.ac.uk/school-public-health/primary-care-and-public-health/research/respiratory-electronic-health-record-group/
+  - given-names: Jennifer K
+    family-names: Quint
+    affiliation: Imperial College London
+    orcid: 'https://orcid.org/0000-0003-0149-4869'
+repository-code: >-
+  https://github.com/NHLI-Respiratory-Epi/SNOMED-CT-codelists
+abstract: >-
+  This is an extension of current standard practice for
+  primary care codelist creation that adds additional steps
+  to take advantage of automated searches and advanced
+  features of the SNOMED CT medical terminology to create
+  more comprehensive codelists.
+keywords:
+  - SNOMED CT
+  - codelist
+  - code set
+  - codeset
+  - Stata
+  - R
+  - Python
