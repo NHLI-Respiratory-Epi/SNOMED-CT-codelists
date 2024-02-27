@@ -4,15 +4,18 @@ This is an extension of [current standard practice for primary care codelist cre
 
 Creating SNOMED CT codelists can be broken down in to 9 steps:
 ```mermaid
-flowchart TD
-    A["1. Identify search terms"] --> B["2. Search the medical dictionary"]
-    B --> C["3. Exclude broad undesired terms (Optional)"]
-    C --> D["4. Manually screen codelist"]
-    D --> E["5. Use SNOMED CT Concept ID to identify synonymous terms"]
-    E --> F["6. Automate code categorisation (Optional)"]
-    F --> G["7. Compare with pre-existing codelists (Optional)"]
-    G --> H[8. Export codelist for clinical review]
-    H --> I[9. Restrict codelist to approved codes]
+ flowchart TD
+ A[1. Identify search terms] --> B[2. Search the medical dictionary]
+    B -. optional .-> C([3. Exclude broad undesired terms])
+    B --> D[4. Manually screen codelist]
+    C -.-> D
+    D --> E[5. Use SNOMED CT Concept ID <br> to identify synonymous terms]
+    E -. optional .-> F(["6. Compare with pre-existing <br>codelists  (if available)"])
+    E -. optional .-> G(["7. Automate code categorisation"])
+    E --> H[8. Export code list for clinical review]
+    F --> G
+    G --> H
+    H --> I[9. Restrict code list to approved codes]
     A:::step
     B:::step
     C:::optional
@@ -20,10 +23,9 @@ flowchart TD
     E:::step
     F:::optional
     G:::optional
-    H:::step
-    I:::final
+    H:::final
     classDef step color:black, fill:#aec6cf, stroke:#779ecb
-    classDef optional fill:#FDC272
+    classDef optional color:black, fill:#e9967a, stroke:#c23b22
     classDef final color:black, fill:#8fbc8f, stroke:#006400
 ```
 
