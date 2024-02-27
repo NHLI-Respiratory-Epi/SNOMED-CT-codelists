@@ -23,7 +23,8 @@ Creating SNOMED CT codelists can be broken down in to 9 steps:
     E:::step
     F:::optional
     G:::optional
-    H:::final
+    H:::step
+    I:::final
     classDef step color:black, fill:#aec6cf, stroke:#779ecb
     classDef optional color:black, fill:#e9967a, stroke:#c23b22
     classDef final color:black, fill:#8fbc8f, stroke:#006400
