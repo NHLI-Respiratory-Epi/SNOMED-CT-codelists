@@ -15,14 +15,15 @@ flowchart TD
     H --> I[9. Restrict codelist to approved codes]
     A:::step
     B:::step
-    C:::step
+    C:::optional
     D:::step
     E:::step
-    F:::step
-    G:::step
+    F:::optional
+    G:::optional
     H:::step
     I:::final
     classDef step color:black, fill:#aec6cf, stroke:#779ecb
+    classDef optional fill:#FFF0F5
     classDef final color:black, fill:#8fbc8f, stroke:#006400
 ```
 
