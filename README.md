@@ -23,7 +23,7 @@ flowchart TD
     H:::step
     I:::final
     classDef step color:black, fill:#aec6cf, stroke:#779ecb
-    classDef optional fill:#FFF0F5
+    classDef optional fill:#FDC272
     classDef final color:black, fill:#8fbc8f, stroke:#006400
 ```
 
