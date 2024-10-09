@@ -10,7 +10,7 @@ Creating SNOMED CT codelists can be broken down in to 9 steps:
     B --> D[4: Manually screen codelist]
     C -.-> D
     D --> E[5: Use SNOMED CT Concept ID <br> to identify synonymous terms]
-    E -. optional .-> F(["6: Compare with pre-existing <br>codelists  (if available)"])
+    E -. optional .-> F(["6: Compare with pre-existing <br>codelists (if available)"])
     E -. optional .-> G(["7: Automate code categorisation"])
     E --> H[8: Export code list for clinical review]
     F --> G
