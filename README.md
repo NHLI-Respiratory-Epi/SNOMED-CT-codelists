@@ -69,7 +69,7 @@ Creating SNOMED CT codelists can be broken down in to 9 steps:
     - Ask the reviewing clinican to generate a column at the end of the spreadsheet headed with their initials where they label the list of terms with a 0 or 1 to classify terms that they would exclude (0) or include (1).
 
 1. **Restrict your codelist to codes approved by a primary care clinician and save.**
-    - Remove any codes from the codelist that were marked with a 0 by the reviewing clinican in **Step 7**.
+    - Remove any codes from the codelist that were marked with a 0 by the reviewing clinican in **Step 8**.
     - Save your finished codelist and export it.
     - Your codelist is now ready to use!
 
